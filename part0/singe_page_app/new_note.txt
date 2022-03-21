@@ -1,0 +1,9 @@
+title spa_new_note
+
+note over browser:
+an event listener in spa.js
+listens for submit actions then
+posts the JSON stringified note
+end note
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+server->browser: {"message":"note created"}

@@ -1,0 +1,26 @@
+# created using https://www.websequencediagrams.com/#
+
+title new_note
+
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note
+server-->browser: HTTP GET (redirect) /exampleapp/notes
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/notes
+server-->browser: notes
+note over browser:
+html response for notes
+links to CSS sheet
+end note
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+server-->browser: main.css
+note over browser:
+html response for notes
+requests main.js from server
+end note
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.js
+server-->browser: main.js
+note over browser:
+main.js requests data.json
+from server
+end note
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.js
+server->browser: daja.json

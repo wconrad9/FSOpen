@@ -1,0 +1,26 @@
+title spa
+
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/spa
+server-->browser: html
+note over browser:
+html contains link
+to css style sheet
+end note
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+server-->browser: main.css
+note over browser:
+html contains request
+for spa.js script in head
+end note
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/spa.js
+server-->browser: spa.js
+note over browser:
+spa.js requests data.json
+from server
+end note
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/data.json
+server-->browser: data.json
+note over browser:
+spa.js handles the
+creation of the list of notes
+end note
