@@ -10,9 +10,8 @@ const Button = ({ onClick, text }) => (
 
 const CapitalWeather = ({ capital }) => {
   const [weatherData, setWeatherData] = useState(null)
-
-  // replace API key!
-  let endpoint = `https://api.openweathermap.org/data/2.5/weather?q=${capital}&APPID=4a72b0cb213687ed3cae899d8ebe7c47`
+  
+  const endpoint = `https://api.openweathermap.org/data/2.5/weather?q=${capital}&APPID=${process.env.REACT_APP_API_KEY}`
   
   useEffect(() => {
     axios
