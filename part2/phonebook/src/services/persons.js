@@ -2,6 +2,12 @@ import axios from 'axios'
 
 const baseUrl = 'http://localhost:3001/persons'
 
+const getAll = () => {
+    const promise = axios.get(baseUrl)
+    const data = promise.then( response => response.data)
+    return data
+}
+
 const create = (newPerson) => {
     return axios
         .post(baseUrl, newPerson)
@@ -19,4 +25,4 @@ const update = (updatedPerson) => {
         .then(response => response.data)
 }
 
-export default { create, remove, update }
+export default { getAll, create, remove, update }

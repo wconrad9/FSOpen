@@ -2,64 +2,27 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import personService from './services/persons'
 
-const Button = ({ onClick, text }) => (
-  <button onClick={onClick}>
-    {text}
-  </button>
-)
+import Filter from './components/Filter'
+import PersonForm from './components/PersonForm'
+import Persons from './components/Persons'
+import Notification from './components/Notification'
 
-
-const Filter = ({onChange}) => {
-  return (
-  <>
-  filter shown with <input onChange={onChange}/>
-  </>
-  )
-}
-
-const PersonForm = (props) => {
-  const {newName, newNumber, addNewName, addNewNumber, onSubmit} = props
-  return (
-  <form onSubmit={onSubmit}>
-        <div>
-          name: <input onChange={addNewName} value={newName}/>
-        </div>
-        <div>
-          number: <input onChange={addNewNumber} value={newNumber}/>
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-  </form>
-  )
-}
-
-const Persons = ({ persons, remove }) => {
-
-  return (
-    <ul>
-      {persons.map( person => 
-        <li key={person.id}>
-          {person.name} {person.number}
-          <Button text={"delete"} onClick={() => remove(person)}/>
-        </li>
-        )}
-    </ul>
-  )
-}
+import './index.css'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filteredPersons, setFilteredPersons] = useState(persons)
+  const [message, setMessage] = useState(null)
+  const [didError, setDidError] = useState(false)
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
+    personService
+      .getAll()
       .then( response => {
-        setPersons(response.data)
-        setFilteredPersons(response.data)
+        setPersons(response)
+        setFilteredPersons(response)
       })
   }, [])
 
@@ -78,7 +41,25 @@ const App = () => {
             .then( updatedPerson => {
               setPersons(persons.map( p => p.id !== updatedPerson.id ? p : updatedPerson))
               setFilteredPersons(filteredPersons.map( p => p.id !== updatedPerson.id ? p : updatedPerson))
+              const msg = `Successfully updated ${updatedPerson.name}'s number.`
+              setMessage(msg)
+              setTimeout( () => {
+                setMessage(null)
+              }, 5000)
             })
+            .catch( () => {
+              const msg = `${updatedPerson.name} was already removed from the server.`
+              setMessage(msg)
+              setDidError(true)
+              setNewName('')
+              setNewNumber('')
+              setPersons(persons.filter(person => person.id !== updatedPerson.id))
+              setFilteredPersons(filteredPersons.filter(person => person.id !== updatedPerson.id))
+              setTimeout( () => {
+              setMessage(null)
+              setDidError(false)
+            }, 5000)
+          })
           return
         } else {
           return
@@ -91,7 +72,7 @@ const App = () => {
     const newPerson = {
       name: newName,
       number: newNumber,
-      id: persons.length + 1
+      id: persons[persons.length-1].id + 1
     }
 
     personService
@@ -99,6 +80,11 @@ const App = () => {
       .then(newPerson => {
         setPersons(persons.concat(newPerson))
         setFilteredPersons(filteredPersons.concat(newPerson))
+        const msg = `Successfully added ${newPerson.name} to the phonebook.`
+        setMessage(msg)
+        setTimeout( () => {
+          setMessage(null)
+        }, 5000)
       })
       .catch( reason => console.log(reason))
     setNewName('')
@@ -130,12 +116,26 @@ const App = () => {
           setPersons(persons.filter(person => person.id !== personToDelete.id))
           setFilteredPersons(filteredPersons.filter(person => person.id !== personToDelete.id))
         })
+        .catch( () => {
+          const msg = `${personToDelete.name} was already removed from the server.`
+          setMessage(msg)
+          setDidError(true)
+          setNewName('')
+          setNewNumber('')
+          setPersons(persons.filter(person => person.id !== personToDelete.id))
+          setFilteredPersons(filteredPersons.filter(person => person.id !== personToDelete.id))
+          setTimeout( () => {
+          setMessage(null)
+          setDidError(false)
+        }, 5000)
+      })
       }
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} error={didError}/>
       <Filter onChange={filterNames}/>
       <h2>add a new</h2>
       <PersonForm
